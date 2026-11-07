@@ -87,3 +87,7 @@ Install-ADDSDomainController -DomainName inflab.local -SafeModeAdministratorPass
 ```bash
 az vm deallocate -g rg-inflab -n dc1   # and dc2 when idle
 ```
+
+## 7. Week 3 pointer
+Hardening script, backup vault, Log Analytics, flow logs, alerts — see
+`docs/week3-security.md` (commands + teardown order). Runbook for week 3 ops lives there.
