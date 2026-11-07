@@ -1,0 +1,43 @@
+<mxfile host="app.diagrams.net" modified="2026-11-07T00:00:00.000Z" agent="manual" version="24.0.0" type="device">
+  <diagram id="inflab-net" name="inflab network">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="vnet" value="VNet 10.10.0.0/16 (vnet-inflab)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="80" width="760" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="mgmt" value="Subnet: management 10.10.2.0/24&#10;NSG: allow RDP/SSH from YOUR_IP/32&#10;deny all other inbound" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="120" y="140" width="300" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="srv" value="Subnet: servers 10.10.1.0/24&#10;NSG: allow RDP/SSH from 10.10.2.0/24 only&#10;deny all other inbound" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="500" y="140" width="300" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="bastion" value="AzureBastionSubnet 10.10.3.0/26&#10;Bastion (optional, off by default)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="360" width="300" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="dc1" value="DC1 (Week 2)&#10;10.10.1.4" style="shape=mxgraph.azure.vm;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="340" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dc2" value="DC2 (Week 2)&#10;10.10.1.5" style="shape=mxgraph.azure.vm;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="640" y="340" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="linux" value="Linux VM (Week 3)&#10;10.10.1.6" style="shape=mxgraph.azure.vm;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="440" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="internet" value="Internet / Admin laptop&#10;(public IP = admin_source_ip)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="880" y="140" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="RDP/SSH" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="internet" target="mgmt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="RDP/SSH from mgmt only" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="mgmt" target="srv">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="AD replication" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" edge="1" parent="1" source="dc1" target="dc2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,9 @@
+# Copy to terraform.tfvars and fill in real values. terraform.tfvars is gitignored.
+
+location             = "centralindia"
+admin_source_ip      = "x.x.x.x/32" # curl -s ifconfig.me then append /32
+budget_contact_emails = ["you@example.com"]
+enable_bastion       = false
+budget_amount        = 25
+admin_username       = "labadmin"
+admin_password       = "Pick-A-Strong-RDP-Pw-2026!" # 12+ chars, upper+lower+digit+symbol
