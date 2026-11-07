@@ -12,9 +12,9 @@ Virtual network: `10.10.0.0/16` (Central India — only koreacentral, centralind
 
 | Host              | Subnet     | IP          | Notes                          |
 |-------------------|------------|-------------|--------------------------------|
-| dc1               | servers    | 10.10.1.4   | Windows DC1 — deployed (Week 2), PIP for RDP |
-| (reserve)         | servers    | 10.10.1.5   | DC2 — Week 2 phase B           |
-| (reserve)         | servers    | 10.10.1.6   | Linux VM — Week 3              |
+| dc1               | servers    | 10.10.1.4   | Windows DC1 — deployed, PIP for RDP |
+| (reserve)         | servers    | 10.10.1.5   | DC2 — second domain controller           |
+| (reserve)         | servers    | 10.10.1.6   | Linux VM — reserved              |
 | (reserve)         | management | 10.10.2.4   | jump box — only if needed      |
 
 DNS: after DC1 promotion, VNet DNS = 10.10.1.4 (DC forwards internet to 168.63.129.16).

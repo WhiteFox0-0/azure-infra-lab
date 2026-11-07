@@ -1,8 +1,7 @@
 #Requires -RunAsAdministrator
 <#
   Baseline hardening for a domain controller lab — safe, reversible settings
-  that map to common CIS/Windows Server baselines (JD keywords: security,
-  hardening, compliance). Run on DC1 and DC2; idempotent.
+  that map to common CIS/Windows Server baselines. Run on DC1 and DC2; idempotent.
 #>
 $ErrorActionPreference = 'Stop'
 $report = @()
@@ -41,7 +40,7 @@ $nla = 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-T
 Set-ItemProperty $nla UserAuthentication 1 -Type DWord
 $report += 'RDP: NLA enforced'
 
-# --- 6. Password policy reminder (already set via secedit in Week 2) ---
+# --- 6. Password policy reminder (set via secedit during domain setup) ---
 $pol = secedit /export /cfg - 2>$null | Out-String
 $minLen = ([regex]::Match($pol, 'MinimumPasswordLength\s*=\s*(\d+)')).Groups[1].Value
 $report += "Password policy: min length = $minLen (expect 12)"

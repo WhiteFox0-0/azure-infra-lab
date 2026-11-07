@@ -1,4 +1,4 @@
-# Runbook — Week 1: apply / destroy
+# Runbook — network: apply / destroy
 
 ## Prerequisites
 ```bash

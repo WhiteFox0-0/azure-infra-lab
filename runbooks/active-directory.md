@@ -1,8 +1,8 @@
-# Runbook — Week 2: Active Directory (DC1 → users → GPO → DC2)
+# Runbook — Active Directory (DC1 → users → GPO → DC2)
 
 ## 0. Cost habit
-DC1 is `vm_size` (default `Standard_B2s_v2`, ~₹4-5/hr — classic `B2s` is capacity-blocked
-in centralindia; override in tfvars if needed). Auto-shutdown is scheduled at **21:30 IST**. When done for
+DC1 is `vm_size` (default `Standard_B2s_v2`; classic `B2s` is capacity-blocked in
+centralindia; override in tfvars if needed). Auto-shutdown is scheduled at **21:30 IST**. When done for
 the day: `az vm deallocate -g rg-inflab -n dc1` (config preserved, ~₹6/day disks).
 
 ## 1. Deploy DC1
@@ -83,11 +83,10 @@ Install-ADDSDomainController -DomainName inflab.local -SafeModeAdministratorPass
 ```
 **Done when:** `repadmin /replsummary` shows 0 fails for DC1/DC2.
 
-## 6. End of week
+## 6. Teardown
 ```bash
 az vm deallocate -g rg-inflab -n dc1   # and dc2 when idle
 ```
 
-## 7. Week 3 pointer
-Hardening script, backup vault, Log Analytics, flow logs, alerts — see
-`docs/week3-security.md` (commands + teardown order). Runbook for week 3 ops lives there.
+## 7. Hardening, backup & monitoring
+See `docs/security.md` (commands + teardown order).

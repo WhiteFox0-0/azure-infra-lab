@@ -1,4 +1,4 @@
-# --- Week 2: DC1 (Windows Server 2022, B2s) ---
+# --- DC1 (Windows Server 2022, B2s) ---
 resource "azurerm_public_ip" "dc1" {
   name                = "pip-inflab-dc1"
   resource_group_name = azurerm_resource_group.main.name

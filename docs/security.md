@@ -1,4 +1,4 @@
-# Week 3 — Security Hardening, Backup & Monitoring
+# Security Hardening, Backup & Monitoring
 
 ## What was done
 
@@ -10,7 +10,7 @@
 | Audit policy | logon/logoff, account lockout, special logon, security group mgmt, user account mgmt, sensitive privilege use — success+failure | CIS audit subcategory baseline subset |
 | Defender | real-time on, MAPS=Advanced, sample submission safe | endpoint protection baseline |
 | RDP | NLA enforced | pre-auth, reduces unauth RDP exposure |
-| Password policy | min length 12, complexity (Week 2) — re-verified | domain policy |
+| Password policy | min length 12, complexity — re-verified | domain policy |
 | Windows Firewall | Domain profile enabled | host firewall baseline |
 
 Run: `az vm run-command invoke -g rg-inflab -n dc1 --command-id RunPowerShellScript --scripts "C:\scripts\harden-dc.ps1"` (same for dc2).
@@ -32,14 +32,14 @@ az backup item list -g rg-inflab -v rv-inflab --backup-management-type AzureIaas
   - Note: NSG flow logs creation is blocked since Jun 2025 (retirement Sep 2027);
     VNet flow logs are the supported replacement — used that.
 - **Metric alerts**: `alert-dc1-cpu`, `alert-dc2-cpu` (avg CPU > 80%, 5m window, severity 2)
-- Budget alert `budget-inflab` ($25, 80%/100%) already from Week 1
+- Budget alert `budget-inflab` ($25, 80%/100%) from network setup
 
-### 4. Cost posture (lab will be torn down after portfolio use)
+### 4. Cost posture
 - Auto-shutdown both DCs 21:30 IST; `az vm deallocate` when idle (~₹6/day disks each)
 - Backup vault + LAW + flow-log storage ≈ ₹200-400/month while alive
 - Deallocate stops compute; delete `rv-inflab`/`law-inflab`/`sinflabdiag` at teardown for ₹0
 
-## Teardown order (when done with portfolio)
+## Teardown order
 ```bash
 az backup item list -g rg-inflab -v rv-inflab -o table          # sanity check
 terraform destroy                                               # VMs, NICs, PIPs, VNet, NSGs
@@ -49,9 +49,3 @@ az backup vault delete -g rg-inflab -n rv-inflab
 az network watcher flow-log delete -g rg-inflab -n fl-vnet-inflab
 az group delete -g rg-inflab --yes                               # catches stragglers
 ```
-
-## JD mapping (Enterprise Infrastructure Engineer)
-- "security hardening / compliance": audit policy, protocol hardening, NLA, baseline script
-- "backup & disaster recovery": vault + daily policy + soft-delete
-- "monitoring & alerting": LAW, flow logs + traffic analytics, metric alerts, budget alert
-- "Infrastructure as Code": Terraform for compute/network; runbook documents CLI-managed ops resources

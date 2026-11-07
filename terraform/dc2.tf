@@ -1,4 +1,4 @@
-# --- Week 2: DC2 (second domain controller) ---
+# --- DC2 (second domain controller) ---
 resource "azurerm_public_ip" "dc2" {
   name                = "pip-inflab-dc2"
   resource_group_name = azurerm_resource_group.main.name
