@@ -20,16 +20,17 @@ Directory domain → security hardening, backup & monitoring.
 
 ## Screenshots
 
+![Server roles healthy](docs/screenshots/windows-server-dashboard.png)
+*Server Manager — AD DS, DHCP, DNS, File Storage green*
+
 | | |
 |---|---|
 | ![AD users, OUs and GPOs](docs/screenshots/ad-gpo-overview.png) | ![H: mapped via GPP](docs/screenshots/h-drive.png) |
 | *Domain: 15 users, OUs (Staff/Groups/Servers), 4 GPOs* | *GPO drive map: `net use` OK + H: in Explorer* |
-| ![GPOs applied to user](docs/screenshots/gpresult.png) | ![Server roles healthy](docs/screenshots/windows-server-dashboard.png) |
-| *gpresult — Restrict-TaskManager + Map-H-Drive applied* | *Server Manager — AD DS, DHCP, DNS, File Storage green* |
+| ![GPOs applied to user](docs/screenshots/gpresult.png) | ![Backup protected](docs/screenshots/backup.png) |
+| *gpresult — Restrict-TaskManager + Map-H-Drive applied* | *Backup — both DCs Healthy* |
 | ![Replication healthy](docs/screenshots/repadmin.png) | ![Terraform state](docs/screenshots/terraform.png) |
 | *repadmin — 0 fails both DCs, both directions* | *Terraform state — full IaC resource list* |
-| ![Backup protected](docs/screenshots/backup.png) | |
-| *Backup — both DCs Healthy* | |
 
 ## Layout
 
