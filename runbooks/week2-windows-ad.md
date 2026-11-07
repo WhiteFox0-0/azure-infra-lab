@@ -16,13 +16,18 @@ NSG: servers subnet now allows RDP from **your IP only** (rule `allow-rdp-ssh-fr
 
 ## 2. First login + promote
 1. `mstsc /v:<dc1_rdp>` as `.\labadmin` / your password
-2. Copy the `scripts/` folder onto the VM (RDP drag-and-drop)
-3. PowerShell **as Administrator**:
+2. Copy `scripts/` to the VM — RDP drag-and-drop is unsupported in some clients;
+   reliable path is base64 via run-command:
+```bash
+B64=$(base64 -i scripts/promote-dc1.ps1 | tr -d '\n')
+az vm run-command invoke -g rg-inflab -n dc1 --command-id RunPowerShellScript \
+  --scripts "[IO.File]::WriteAllBytes('C:\scripts\promote-dc1.ps1',[Convert]::FromBase64String('$B64'))"
+# repeat per script (configure-dc.ps1, new-users-from-csv.ps1, users.csv, set-gpos.ps1, …)
+```
+3. Promote (run-command, reboot is expected — session may wedge, restart VM if stuck):
 ```powershell
-cd C:\scripts
-.\promote-dc1.ps1 -DSRMPassword 'Some-Strong-2026!'   # renames to DC1, reboots
-# after reboot, log in again (still local .\labadmin), then:
-.\promote-dc1.ps1 -DSRMPassword 'Some-Strong-2026!'   # promotes, reboots
+.\promote-dc1.ps1 -DSRMPassword 'DsrM-Secure-2026!42'   # renames to DC1, reboots
+# after reboot: run again → promotes, reboots
 # after promotion you log in as INFLAB\labadmin
 ```
 
@@ -39,8 +44,15 @@ Get-ADOrganizationalUnit -Filter * | Select Name
 Get-GPO -All
 gpresult /r               # (after login to a Staff user) shows both GPOs applied
 ```
-Test as a user: log in as `INFLAB\amina.hassan` → H: drive appears, Task Manager blocked,
-password change forced at first logon.
+Test as a user: log in as `INFLAB\amina.hassan` / `Lab-Passw0rd-2026!` → H: drive appears,
+Task Manager blocked, password change forced at first logon.
+
+### GPP gotchas (learned the hard way — keep for future GPO work)
+- GPO invisible to `gpresult` entirely → `gPCUserExtensionNames` empty; set
+  `[{CSE-GUID}{Tool-GUID}]` (Drives: `{5794DAFD-BE60-433f-88A2-1A31939AC01F}{2EA1A81B-48E5-45E9-8BB7-A6E3AC170006}`)
+- "Missing drive letter" 0x80070057 → attribute is **`letter="H"`**, not `driveLetter=`; container clsid
+  is `{8FDDCC1A-0C3C-43cd-A6B4-71A6DF20DA8C}`; no BOM; bump `gpt.ini` + AD `versionNumber` after edits
+  (AD version attr is `versionNumber`, not `gPCVersion`).
 
 ## 4. Point Azure DNS at the DC
 ```bash
@@ -51,15 +63,23 @@ internet lookups to 168.63.129.16.)
 
 ## 5. Phase B — second DC + replication
 ```bash
-# add DC2 block to terraform (same shape as dc1.tf: private IP 10.10.1.5), then:
+# dc2.tf (same shape as dc1.tf: private IP 10.10.1.5, pip-inflab-dc2, auto-shutdown), then:
 terraform apply
 ```
-1. RDP to DC2 as `.\labadmin`
-2. Copy `scripts/`, run: `.\promote-dc2.ps1 -DSRMPassword '...' -DomainCredential (Get-Credential)`
-   (credential: `Administrator` / your RDP password) → reboots, joins as DC2
-3. On either DC:
+1. Upload `promote-dc2.ps1` + `test-replication.ps1` via base64 run-command (step 2 above)
+2. Promote via run-command (domain credential is `inflab\labadmin` / admin password;
+   plain `labadmin` without domain prefix fails with "Unable to update the password"):
 ```powershell
-.\test-replication.ps1    # repadmin /replsummary + metadata + dcdiag — all green
+$dsrm = ConvertTo-SecureString 'DsrM-Secure-2026!42' -AsPlainText -Force
+$cred = [pscredential]::new('inflab\labadmin', (ConvertTo-SecureString '<admin_password>' -AsPlainText -Force))
+Install-WindowsFeature AD-Domain-Services,DNS,DHCP -IncludeManagementTools
+Install-ADDSDomainController -DomainName inflab.local -SafeModeAdministratorPassword $dsrm -InstallDns -Credential $cred -Force
+```
+   Post-promotion reboot may wedge the run-command session (stuck "Updating") → `az vm restart -g rg-inflab -n dc2`
+3. On DC2 run: `.\test-replication.ps1`
+```powershell
+# expect: replsummary 0 fails both DCs; partner metadata LastReplicationResult=0;
+# DC2 sees 12 Staff users + 4 GPOs
 ```
 **Done when:** `repadmin /replsummary` shows 0 fails for DC1/DC2.
 
